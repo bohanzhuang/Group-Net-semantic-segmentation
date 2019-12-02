@@ -8,7 +8,7 @@ created by [Bohan Zhuang](https://sites.google.com/view/bohanzhuang)
 
 
 ## Training 
-python train.py
+python train.py. We use the binary backbone pretrained on ImageNet as initialization.
 
 ## Testing
 python test.py
