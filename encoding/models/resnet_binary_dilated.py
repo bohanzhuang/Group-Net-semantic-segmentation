@@ -73,9 +73,9 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
         else:
 
@@ -102,12 +102,12 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
 
-        return output_bases, final_output
+        return output_bases, final_output / self.num_bases
 
 
 
