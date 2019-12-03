@@ -8,7 +8,8 @@ created by [Bohan Zhuang](https://sites.google.com/view/bohanzhuang)
 
 
 ## Training 
-python train.py. We use the binary backbone pretrained on ImageNet as initialization. The pretrained binary backbone can be downloaded at [image classification repository](https://bitbucket.org/jingruixiaozhuang/group-net-image-classification/src/master/).
+
+python train.py. We use the binary backbone pretrained on ImageNet as initialization. The pretrained binary backbone can be downloaded at [image classification repository](https://github.com/zhuangbohan/Group-Net-image-classification).
 
 ## Testing
 python test.py
