@@ -22,12 +22,20 @@ class BasicBlock(nn.Module):
         self.num_bases = num_bases
         self.add_gate = add_gate
         self.relu = nn.ReLU()
-        self.conv1 = nn.ModuleList([conv3x3(inplanes, planes, stride=stride, padding=dilation, dilation=dilation) for i in range(num_bases)])       
+        if isinstance(dilation, list):
+            for ratio in dilation:
+                self.conv1 = nn.ModuleList([conv3x3(inplanes, planes, stride=stride, padding=ratio, dilation=ratio) for i in range(num_bases)])       
+        else:
+            self.conv1 = nn.ModuleList([conv3x3(inplanes, planes, stride=stride, padding=dilation, dilation=dilation) for i in range(num_bases)])              
         self.bn1 = nn.ModuleList([nn.BatchNorm2d(planes) for i in range(num_bases)])
-        self.conv2 = nn.ModuleList([conv3x3(planes, planes, padding=previous_dilation, dilation=previous_dilation) for i in range(num_bases)])
+
+        if isinstance(previous_dilation, list):
+            for ratio in previous_dilation:
+                self.conv2 = nn.ModuleList([conv3x3(planes, planes, padding=ratio, dilation=ratio) for i in range(num_bases)])
+        else:
+            self.conv2 = nn.ModuleList([conv3x3(planes, planes, padding=previous_dilation, dilation=previous_dilation) for i in range(num_bases)])
         self.bn2 = nn.ModuleList([nn.BatchNorm2d(planes) for i in range(num_bases)])
         self.downsample = downsample
-        self.scales = nn.ParameterList([nn.Parameter(torch.rand(1).cuda(), requires_grad=True) for i in range(num_bases)])
         if add_gate:
             self.block_gate = nn.Parameter(torch.rand(1).cuda(), requires_grad=True)
 
@@ -39,7 +47,7 @@ class BasicBlock(nn.Module):
 
         if self.add_gate:
 
-            for base, conv1, conv2, bn1, bn2, scale in zip(input_bases, self.conv1, self.conv2, self.bn1, self.bn2, self.scales):
+            for base, conv1, conv2, bn1, bn2 in zip(input_bases, self.conv1, self.conv2, self.bn1, self.bn2):
 
                 x = nn.Sigmoid()(self.block_gate) * base + (1.0 - nn.Sigmoid()(self.block_gate)) * input_mean
 
@@ -64,20 +72,20 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
         else:
 
-            if self.downsample is not None:
-                x = Q_A.apply(input_mean)
-                residual = self.downsample(x)
-            else:
-                residual = input_mean
-                x = Q_A.apply(input_mean)
+            for conv1, conv2, bn1, bn2 in zip(self.conv1, self.conv2, self.bn1, self.bn2):
 
-            for conv1, conv2, bn1, bn2, scale in zip(self.conv1, self.conv2, self.bn1, self.bn2, self.scales):
+                if self.downsample is not None:
+                    x = Q_A.apply(input_mean)
+                    residual = self.downsample(x)
+                else:
+                    residual = input_mean
+                    x = Q_A.apply(input_mean)
 
                 out = conv1(x)
                 out = self.relu(out)
@@ -93,12 +101,12 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
 
-        return output_bases, final_output
+        return output_bases, final_output / self.num_bases
 
 
 
@@ -129,14 +137,14 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         if dilated:
             self.layer3 = self._make_layer(block, 256, layers[2], stride=1,
-                                           dilation=2)
+                                           dilation=[2,3,4,5,6])
             if multi_grid:
                 self.layer4 = self._make_layer(block, 512, layers[3], stride=1,
                                                dilation=4,
                                                multi_grid=True)
             else:
                 self.layer4 = self._make_layer(block, 512, layers[3], stride=1,
-                                               dilation=4)
+                                               dilation=[6,7,8,9,10])
         else:
             self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
             self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
@@ -164,6 +172,11 @@ class ResNet(nn.Module):
         elif dilation == 4:
             layers.append(block(self.num_bases, self.inplanes, planes, stride, dilation=2,
                                 downsample=downsample, previous_dilation=dilation, add_gate=add_gate))
+
+        elif isinstance(dilation, list):
+            layers.append(block(self.num_bases, self.inplanes, planes, stride, dilation=dilation,
+                                downsample=downsample, previous_dilation=dilation, add_gate=add_gate))
+
         else:
             raise RuntimeError("=> unknown dilation size: {}".format(dilation))
 

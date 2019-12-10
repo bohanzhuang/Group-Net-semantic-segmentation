@@ -27,7 +27,6 @@ class BasicBlock(nn.Module):
         self.conv2 = nn.ModuleList([conv3x3(planes, planes, padding=previous_dilation, dilation=previous_dilation) for i in range(num_bases)])
         self.bn2 = nn.ModuleList([nn.BatchNorm2d(planes) for i in range(num_bases)])
         self.downsample = downsample
-        self.scales = nn.ParameterList([nn.Parameter(torch.rand(1).cuda(), requires_grad=True) for i in range(num_bases)])
         if add_gate:
             self.block_gate = nn.Parameter(torch.rand(1).cuda(), requires_grad=True)
 
@@ -39,7 +38,7 @@ class BasicBlock(nn.Module):
 
         if self.add_gate:
 
-            for base, conv1, conv2, bn1, bn2, scale in zip(input_bases, self.conv1, self.conv2, self.bn1, self.bn2, self.scales):
+            for base, conv1, conv2, bn1, bn2 in zip(input_bases, self.conv1, self.conv2, self.bn1, self.bn2):
 
                 x = nn.Sigmoid()(self.block_gate) * base + (1.0 - nn.Sigmoid()(self.block_gate)) * input_mean
 
@@ -64,9 +63,9 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
         else:
 
@@ -77,7 +76,7 @@ class BasicBlock(nn.Module):
                 residual = input_mean
                 x = Q_A.apply(input_mean)
 
-            for conv1, conv2, bn1, bn2, scale in zip(self.conv1, self.conv2, self.bn1, self.bn2, self.scales):
+            for conv1, conv2, bn1, bn2 in zip(self.conv1, self.conv2, self.bn1, self.bn2):
 
                 out = conv1(x)
                 out = self.relu(out)
@@ -93,12 +92,12 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = scale * out_new
+                    final_output = out_new
                 else:
-                    final_output += scale * out_new
+                    final_output += out_new
 
 
-        return output_bases, final_output
+        return output_bases, final_output / self.num_bases
 
 
 

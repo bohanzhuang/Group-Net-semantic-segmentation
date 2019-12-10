@@ -36,6 +36,7 @@ class BasicBlock(nn.Module):
             self.conv2 = nn.ModuleList([conv3x3(planes, planes, padding=previous_dilation, dilation=previous_dilation) for i in range(num_bases)])
         self.bn2 = nn.ModuleList([nn.BatchNorm2d(planes) for i in range(num_bases)])
         self.downsample = downsample
+        self.scales = nn.ParameterList([nn.Parameter(torch.rand(1).cuda(), requires_grad=True) for i in range(num_bases)])
         if add_gate:
             self.block_gate = nn.Parameter(torch.rand(1).cuda(), requires_grad=True)
 
@@ -72,9 +73,9 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = out_new
+                    final_output = scale * out_new
                 else:
-                    final_output += out_new
+                    final_output += scale * out_new
 
         else:
 
@@ -101,12 +102,12 @@ class BasicBlock(nn.Module):
                 output_bases.append(out_new)
                       
                 if final_output is None:
-                    final_output = out_new
+                    final_output = scale * out_new
                 else:
-                    final_output += out_new
+                    final_output += scale * out_new
 
 
-        return output_bases, final_output / self.num_bases
+        return output_bases, final_output
 
 
 
