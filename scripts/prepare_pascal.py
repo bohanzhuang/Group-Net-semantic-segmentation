@@ -5,7 +5,7 @@ import argparse
 import tarfile
 from encoding.utils import download, mkdir
 
-datadir = '/g/acvt/a1675776/'
+datadir = './'
 _TARGET_DIR = os.path.expanduser(os.path.join(datadir, 'encoding/data'))
 
 

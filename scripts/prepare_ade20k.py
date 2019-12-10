@@ -5,7 +5,7 @@ import argparse
 import zipfile
 from encoding.utils import download, mkdir
 
-_TARGET_DIR = os.path.expanduser('~/.encoding/data')
+_TARGET_DIR = os.path.expanduser('./encoding/data')
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -31,7 +31,7 @@ def download_ade(path, overwrite=False):
 
 if __name__ == '__main__':
     args = parse_args()
-    mkdir(os.path.expanduser('~/.encoding/data'))
+    mkdir(os.path.expanduser('./encoding/data'))
     if args.download_dir is not None:
         if os.path.isdir(_TARGET_DIR):
             os.remove(_TARGET_DIR)
