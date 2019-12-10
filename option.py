@@ -12,8 +12,8 @@ class Options():
     def __init__(self):
         parser = argparse.ArgumentParser(description='PyTorch \
             Segmentation')
-        # model and dataset 
-        parser.add_argument('--model', type=str, default='deeplab',
+        # model and dataset, you can modify default to deeplab
+        parser.add_argument('--model', type=str, default='fcn',
                             help='model name (default: encnet)')
         # modify your backbone here. If you want to train a full-precision model, change it to e.g, resnet18.
         parser.add_argument('--backbone', type=str, default='binary_resnet18',

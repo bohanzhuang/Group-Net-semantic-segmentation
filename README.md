@@ -15,7 +15,6 @@ created by [Bohan Zhuang](https://sites.google.com/view/bohanzhuang)
 - In particular, to make consistent with the conference version, we employ the learnt "scales". But in the journal version, we omit this scale and directly average the results. 
 
 
-
 ## Testing
 python test.py
 
@@ -30,7 +29,6 @@ python test.py
 }
 
 ```
-
 
 ## License
 
