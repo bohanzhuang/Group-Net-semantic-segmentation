@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import math
 from torch.autograd import Variable
 
-class Q_A(torch.autograd.Function):  #dorefanet, but constrain to {-1, 1}
+class Q_A(torch.autograd.Function): 
     @staticmethod
     def forward(ctx, x):
         ctx.save_for_backward(x)    
@@ -35,7 +35,7 @@ class Q_A_DOREFA(torch.autograd.Function):
 
 
 
-class Q_W(torch.autograd.Function):  # xnor-net, but gradient use identity approximation
+class Q_W(torch.autograd.Function): 
     @staticmethod
     def forward(ctx, x):
         return x.sign() * x.abs().mean()
@@ -116,7 +116,7 @@ class group_conv(nn.Module):
                 output = module(x)
             else:
                 output += module(x)
-        return output / self.num_bases      # remove scale influence
+        return output / self.num_bases  
 
 
 

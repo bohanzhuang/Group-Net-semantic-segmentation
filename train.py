@@ -39,12 +39,12 @@ class Trainer():
         data_kwargs = {'transform': input_transform, 'base_size': args.base_size,
                        'crop_size': args.crop_size}
 
-        trainset_1 = get_dataset('pascal_voc', root=os.path.expanduser('/fast/users/a1675776/data/encoding/data'), split='train', mode='train',
+        trainset_1 = get_dataset('pascal_voc', root=os.path.expanduser('./encoding/data'), split='train', mode='train',
                                            **data_kwargs)
 
-        trainset_2 = get_dataset('pascal_aug', root=os.path.expanduser('/fast/users/a1675776/data/encoding/data'), split='train', mode='train',
+        trainset_2 = get_dataset('pascal_aug', root=os.path.expanduser('./encoding/data'), split='train', mode='train',
                                            **data_kwargs)
-        testset = get_dataset('pascal_voc', root=os.path.expanduser('/fast/users/a1675776/data/encoding/data'), split='val', mode ='val',
+        testset = get_dataset('pascal_voc', root=os.path.expanduser('./encoding/data'), split='val', mode ='val',
                                            **data_kwargs)
 
         concatenate_trainset = torch.utils.data.ConcatDataset([trainset_1, trainset_2])

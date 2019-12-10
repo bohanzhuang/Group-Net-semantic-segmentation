@@ -15,6 +15,7 @@ class Options():
         # model and dataset 
         parser.add_argument('--model', type=str, default='deeplab',
                             help='model name (default: encnet)')
+        # modify your backbone here. If you want to train a full-precision model, change it to e.g, resnet18.
         parser.add_argument('--backbone', type=str, default='binary_resnet18',
                             help='backbone name (default: resnet50)')
         parser.add_argument('--dataset', type=str, default='pascal_voc',

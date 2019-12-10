@@ -50,7 +50,6 @@ class DeepLabV3Head(nn.Module):
             nn.Conv2d(inter_channels, inter_channels, 3, padding=1, bias=False),
             norm_layer(inter_channels),
             nn.ReLU(True),
-#            nn.Dropout2d(0.1, False),
             nn.Conv2d(inter_channels, out_channels, 1))
 
     def forward(self, x):
@@ -64,7 +63,6 @@ def ASPPConv(in_channels, out_channels, atrous_rate, norm_layer):
         group_conv(in_channels, out_channels, 3, padding=atrous_rate,
                   dilation=atrous_rate, bias=False),
         norm_layer(out_channels))
-#        nn.ReLU(True))
     return block
 
 
@@ -75,7 +73,6 @@ class AsppPooling(nn.Module):
         self.gap = nn.Sequential(nn.AdaptiveAvgPool2d(1),
                                  group_conv(in_channels, out_channels, 1, bias=False),
                                  norm_layer(out_channels))
-#                                 nn.ReLU(True))
 
     def forward(self, x):
         _, _, h, w = x.size()
@@ -108,8 +105,6 @@ class ASPP_Module(nn.Module):
         feat3 = self.b3(x)
         feat4 = self.b4(x)
 
-#        y = torch.mean(torch.stack([feat0, feat1, feat2, feat3, feat4]), dim=0)
-#        return y
         y = torch.cat((feat0, feat1, feat2, feat3, feat4), 1)
         return self.project(y)
 
