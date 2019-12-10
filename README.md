@@ -4,7 +4,7 @@ created by [Bohan Zhuang](https://sites.google.com/view/bohanzhuang)
 
 ## [External code](http://hangzh.com/PyTorch-Encoding/)
 
-- We use the [**PyTorch-Encoding**](http://hangzh.com/PyTorch-Encoding/) as code base. Please refer to Pytorch-Encoding for detailed instructions of installation and usage. 
+- We use the [**PyTorch-Encoding**](http://hangzh.com/PyTorch-Encoding/) as the code base. Please refer to Pytorch-Encoding for detailed instructions of installation and usage. Note that you **must** install pytorch 1.0 from source and you need to solve the bug via this [link](https://github.com/huanghoujing/PyTorch-Encoding/blob/master/Fix_Bugs_of_Pytorch_Encoding.md). 
 
 
 ## Training 
